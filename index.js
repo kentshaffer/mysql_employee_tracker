@@ -70,5 +70,35 @@ function addDepartment() {
   })
 }
 
+async function addRole() {
+  const [departments] = await db.promise().query('SELECT * FROM department')
+  const departmentArray = departments.map(({id, department_name}) => (
+  {
+    name: department_name, value: id
+  }
+  ))
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'roleName',
+      message: 'What is the name of the role you would like to add?'
+    },
+    {
+      type: 'input',
+      name: 'roleSalary',
+      message: 'What is the salary of this role?'
+    },
+    {
+      type: 'list',
+      name: 'existingDepartments',
+      message: 'What department does this role belong to?',
+      choices: departmentArray
+    },
+  ]).then(answers => {
+    let roleObj = {title: answers.roleName, salary: answers.roleSalary, department_id: answers.existingDepartments}
+    db.promise().query('INSERT INTO employee_role SET ?', roleObj).then(dbData => console.log(dbData))
+  })
+}
+
 
 openingPrompt()
