@@ -57,4 +57,18 @@ function openingPrompt() {
 }
 
 
+function addDepartment() {
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'departmentName',
+      message: 'What is the name of the department you would like to add?'
+    },
+  ]).then(answers => {
+    let newDepartment = {department_name: answers.departmentName}
+    db.promise().query('INSERT INTO department SET ?', newDepartment).then(dbData => console.log(dbData))
+  })
+}
+
+
 openingPrompt()
