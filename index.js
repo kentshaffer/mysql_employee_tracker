@@ -100,5 +100,43 @@ async function addRole() {
   })
 }
 
+//TODO pull info from employee role table 
+//update inquirer prompt questions
+//fix the .then to let returned obj use prompt questions/existing table info
+//test 
+
+async function addEmployee() {
+  const [roles] = await db.promise().query('SELECT * FROM employee_role')
+  const roleArray = roles.map(({title, role_title}) => (
+  {
+    name: role_title, value: title
+
+  }
+  ))
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'firstName',
+      message: 'What is the first name of the employee you would like to add?'
+    },
+    {
+      type: 'input',
+      name: 'lastName',
+      message: 'What is the last name of the employee you would like to add?'
+    },
+    {
+      type: 'list',
+      name: 'existingRoles',
+      message: 'What role does this employee hold?',
+      choices: roleArray
+    },
+  ]).then(answers => {
+    let employeeObj = {first_name: answers.firstName, last_name: answers.lastName, role_id: answers.existingRoles}
+    db.promise().query('INSERT INTO employee SET ?', employeeObj).then(dbData => console.log(dbData))
+  })
+}
+
+
+
 
 openingPrompt()
