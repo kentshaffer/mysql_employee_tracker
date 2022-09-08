@@ -60,7 +60,7 @@ function openingPrompt() {
 function viewDepartments() {
   db.query('SELECT * FROM department', function (err, results) {
     console.table(results);
-        
+
     openingPrompt();
   });
 }
@@ -75,13 +75,19 @@ function addDepartment() {
   ]).then(answers => {
     let newDepartment = { department_name: answers.departmentName }
     db.promise().query('INSERT INTO department SET ?', newDepartment).then(dbData => console.log(dbData))
+
+    openingPrompt();
   })
 }
 
 function viewRoles() {
-  db.query('SELECT * FROM employee_role', function (err, results) {
+  db.query(`SELECT employee_role.id, employee_role.title, department.department_name, employee_role.salary
+  FROM employee_role
+  JOIN department ON
+  employee_role.department_id = department.id`,
+  function (err, results) {
     console.table(results);
-        
+
     openingPrompt();
   });
 }
@@ -114,7 +120,7 @@ async function addRole() {
   ]).then(answers => {
     let roleObj = { title: answers.roleName, salary: answers.roleSalary, department_id: answers.existingDepartments }
     db.promise().query('INSERT INTO employee_role SET ?', roleObj).then(dbData => console.log(dbData))
-        
+
     openingPrompt();
   })
 }
@@ -125,19 +131,32 @@ async function addRole() {
 //test 
 
 function viewEmployees() {
-  db.query('SELECT * FROM employee', function (err, results) {
+  db.query(`SELECT employee.id, employee.first_name, employee.last_name, employee_role.title, department.department_name, employee_role.salary, employee.manager_id
+  FROM employee
+  JOIN employee_role ON
+  employee.role_id = employee_role.id
+  JOIN department ON
+  employee_role.department_id = department.id`,
+  function (err, results) {
     console.table(results);
 
     openingPrompt();
   });
 }
 
-
+// SELECT employee_role.title, employee.role_id FROM employee_role JOIN employee ON employee_role.id = employee.role_id
 async function addEmployee() {
   const [roles] = await db.promise().query('SELECT * FROM employee_role')
-  const roleArray = roles.map(({ title, role_id }) => (
+  const roleArray = roles.map(({ title, id }) => (
     {
-      name: title, value: role_id
+      name: title, value: id
+
+    }
+  ))
+  const [employees] = await db.promise().query('SELECT * FROM employee')
+  const employeeArray = employees.map(({ first_name, last_name, id }) => (
+    {
+      name: [(first_name), (last_name)], value: id
 
     }
   ))
@@ -162,12 +181,12 @@ async function addEmployee() {
       type: 'list',
       name: 'possibleManager',
       message: 'Who is the employees manager?',
-      choices: roleArray
+      choices: employeeArray
     },
   ]).then(answers => {
-    let employeeObj = { first_name: answers.firstName, last_name: answers.lastName, role_id: answers.existingRoles }
+    let employeeObj = { first_name: answers.firstName, last_name: answers.lastName, role_id: answers.existingRoles, manager_id: answers.possibleManager }
     db.promise().query('INSERT INTO employee SET ?', employeeObj).then(dbData => console.log(dbData))
-        
+
     openingPrompt();
   })
 }
@@ -177,14 +196,14 @@ async function addEmployee() {
 //     console.log('See Ya');
 //   };
 
-function quit() {   
-  db.end(function(err) {
+function quit() {
+  db.end(function (err) {
     if (err) {
       return console.log('error:' + err.message);
     }
     console.log('Closed connection. See ya Later');
   });
-}   
+}
 
 
 
