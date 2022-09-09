@@ -85,11 +85,11 @@ function viewRoles() {
   FROM employee_role
   JOIN department ON
   employee_role.department_id = department.id`,
-  function (err, results) {
-    console.table(results);
+    function (err, results) {
+      console.table(results);
 
-    openingPrompt();
-  });
+      openingPrompt();
+    });
 }
 
 
@@ -119,8 +119,15 @@ async function addRole() {
     },
   ]).then(answers => {
     let roleObj = { title: answers.roleName, salary: answers.roleSalary, department_id: answers.existingDepartments }
-    db.promise().query('INSERT INTO employee_role SET ?', roleObj).then(dbData => console.log(dbData))
+    db.promise().query(`INSERT INTO employee_role SET ?`, roleObj).then(dbData => console.log(dbData))
 
+    // IF @@ROWCOUNT > 0 PRINT 'New role added'
+
+
+    // {console.log()};
+    // } else {
+    // {console.log('Failed to add new role');}
+    // }
     openingPrompt();
   })
 }
@@ -137,14 +144,13 @@ function viewEmployees() {
   employee.role_id = employee_role.id
   JOIN department ON
   employee_role.department_id = department.id`,
-  function (err, results) {
-    console.table(results);
+    function (err, results) {
+      console.table(results);
 
-    openingPrompt();
-  });
+      openingPrompt();
+    });
 }
 
-// SELECT employee_role.title, employee.role_id FROM employee_role JOIN employee ON employee_role.id = employee.role_id
 async function addEmployee() {
   const [roles] = await db.promise().query('SELECT * FROM employee_role')
   const roleArray = roles.map(({ title, id }) => (
@@ -191,10 +197,40 @@ async function addEmployee() {
   })
 }
 
-// function quit() {
-//   db.query('quit')
-//     console.log('See Ya');
-//   };
+async function updateEmployeeRole() {
+  const [employees] = await db.promise().query('SELECT * FROM employee')
+  const employeeArray = employees.map(({ first_name, last_name, id }) => (
+    {
+      name: [(first_name), (last_name)], value: id
+
+    }
+  ))
+  const [roles] = await db.promise().query('SELECT * FROM employee_role')
+  const roleArray = roles.map(({ title, id }) => (
+    {
+      name: title, value: id
+    }
+  ))
+  inquirer.prompt([
+    {
+      type: 'list',
+      name: 'employeeToUpdate',
+      message: "Which employee's role would you like to update?",
+      choices: employeeArray
+    },
+    {
+      type: 'list',
+      name: 'newRole',
+      message: 'Which role would you like to assign the selected employee?',
+      choices: roleArray
+    },
+  ]).then(answers => {
+    let roleObj = { title: answers.newRole }
+    db.promise().query(`UPDATE employee_role SET ? WHERE title = ?`, roleObj).then(dbData => console.log(dbData))
+
+    openingPrompt();
+  })
+}
 
 function quit() {
   db.end(function (err) {
