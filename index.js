@@ -12,6 +12,8 @@ const db = mysql.createConnection(
   },
 );
 
+
+//selection menu
 function openingPrompt() {
   inquirer.prompt([
     {
@@ -57,6 +59,7 @@ function openingPrompt() {
     });
 }
 
+//display department id and department name in a table
 function viewDepartments() {
   db.query('SELECT * FROM department', function (err, results) {
     console.table(results);
@@ -65,6 +68,8 @@ function viewDepartments() {
   });
 }
 
+
+//
 function addDepartment() {
   inquirer.prompt([
     {
@@ -74,7 +79,7 @@ function addDepartment() {
     },
   ]).then(answers => {
     let newDepartment = { department_name: answers.departmentName }
-    db.promise().query('INSERT INTO department SET ?', newDepartment).then(dbData => console.log(dbData))
+    db.promise().query('INSERT INTO department SET ?', newDepartment).then(console.log('New department added'));
 
     openingPrompt();
   })
@@ -119,23 +124,12 @@ async function addRole() {
     },
   ]).then(answers => {
     let roleObj = { title: answers.roleName, salary: answers.roleSalary, department_id: answers.existingDepartments }
-    db.promise().query(`INSERT INTO employee_role SET ?`, roleObj).then(dbData => console.log(dbData))
+    db.promise().query(`INSERT INTO employee_role SET ?`, roleObj).then(console.log('New role added'));
 
-    // IF @@ROWCOUNT > 0 PRINT 'New role added'
-
-
-    // {console.log()};
-    // } else {
-    // {console.log('Failed to add new role');}
-    // }
     openingPrompt();
   })
 }
 
-//TODO pull info from employee role table 
-//update inquirer prompt questions
-//fix the .then to let returned obj use prompt questions/existing table info
-//test 
 
 function viewEmployees() {
   db.query(`SELECT employee.id, employee.first_name, employee.last_name, employee_role.title, department.department_name, employee_role.salary, employee.manager_id
@@ -191,7 +185,7 @@ async function addEmployee() {
     },
   ]).then(answers => {
     let employeeObj = { first_name: answers.firstName, last_name: answers.lastName, role_id: answers.existingRoles, manager_id: answers.possibleManager }
-    db.promise().query('INSERT INTO employee SET ?', employeeObj).then(dbData => console.log(dbData))
+    db.promise().query('INSERT INTO employee SET ?', employeeObj).then(console.log('New employee added'));
 
     openingPrompt();
   })
@@ -226,7 +220,7 @@ async function updateEmployeeRole() {
     },
   ]).then(answers => {
     let roleObj = { title: answers.newRole }
-    db.promise().query(`UPDATE employee_role SET ? WHERE title = ?`, roleObj).then(dbData => console.log(dbData))
+    db.promise().query(`UPDATE employee SET role_id = ${roleObj.title} WHERE id = ${answers.employeeToUpdate}`).then(console.log('Employee role successfully updated'));
 
     openingPrompt();
   })
