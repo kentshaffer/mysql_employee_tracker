@@ -59,7 +59,7 @@ function openingPrompt() {
     });
 }
 
-//display department id and department name in a table
+//display department id and department name in terminal table
 function viewDepartments() {
   db.query('SELECT * FROM department', function (err, results) {
     console.table(results);
@@ -69,7 +69,7 @@ function viewDepartments() {
 }
 
 
-//
+//add department
 function addDepartment() {
   inquirer.prompt([
     {
@@ -85,6 +85,7 @@ function addDepartment() {
   })
 }
 
+//display role id, title, department, and salary in terminal table
 function viewRoles() {
   db.query(`SELECT employee_role.id, employee_role.title, department.department_name, employee_role.salary
   FROM employee_role
@@ -97,7 +98,7 @@ function viewRoles() {
     });
 }
 
-
+//add employee role, salary, and department the role belongs to
 async function addRole() {
   const [departments] = await db.promise().query('SELECT * FROM department')
   const departmentArray = departments.map(({ id, department_name }) => (
@@ -130,7 +131,7 @@ async function addRole() {
   })
 }
 
-
+//display employee id, first name, last name, title, department, salary, and manager id in terminal table
 function viewEmployees() {
   db.query(`SELECT employee.id, employee.first_name, employee.last_name, employee_role.title, department.department_name, employee_role.salary, employee.manager_id
   FROM employee
@@ -145,6 +146,7 @@ function viewEmployees() {
     });
 }
 
+//add employee with first/last name, role, and manager
 async function addEmployee() {
   const [roles] = await db.promise().query('SELECT * FROM employee_role')
   const roleArray = roles.map(({ title, id }) => (
@@ -191,6 +193,7 @@ async function addEmployee() {
   })
 }
 
+//update role for existing employee
 async function updateEmployeeRole() {
   const [employees] = await db.promise().query('SELECT * FROM employee')
   const employeeArray = employees.map(({ first_name, last_name, id }) => (
@@ -226,6 +229,7 @@ async function updateEmployeeRole() {
   })
 }
 
+// quit app
 function quit() {
   db.end(function (err) {
     if (err) {
