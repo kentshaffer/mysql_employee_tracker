@@ -37,7 +37,7 @@ Created a MySQl application that runs through the command line with node.js. Use
 
 My name is Kent SHaffer and I am a student in UCSD's full stack web development bootcamp. Prior to starting the program I had zero code experience, so it feels I've been drinking in new information through a fire hose, but I have been loving learning, and I'm excited about all the possibilities that live within the scope of the technologies I have been learning.
 
-If you have any questions, or would like to get in contact, I can be reached at kentshaff@gmail.com 
+If you have any questions or would like to get in contact, I can be reached at kentshaff@gmail.com 
 
 ---
 
@@ -49,6 +49,17 @@ If you have any questions, or would like to get in contact, I can be reached at 
 ## Screenshots and Gifs of app:
 
 
-![screenshot of readme file that has been generated using the command line readme generator](./Assets/Screen%20Shot%202022-09-08%20at%2011.46.40%20PM.png)
+![gif of adding a department](./Assets/add-department-gif.gif)
 
+![gif of app startup and displaying employee roles table](./Assets/startup-view-roles-gif.gif)
+
+![gif of updating an employee role](./Assets/update-employee-role-gif.gif)
+
+![gif of displaying the employee table](./Assets/view-employees-gif.gif)
+
+![screenshot displaying the departments table](./Assets/view-departments-screenshot.png)
+
+![screenshot displaying the employees table](./Assets/view-employees-screenshot.png)
+
+![screenshot displaying the roles table](./Assets/view-roles-screenshot.png)
 ---
